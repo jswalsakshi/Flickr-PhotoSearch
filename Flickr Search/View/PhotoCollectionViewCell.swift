@@ -12,6 +12,8 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imgView_photo: RoundedImageView!
     
+    static let cellIdentifier: String = "PhotoCollectionViewCell"
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -10,7 +10,7 @@
         <!--Home-->
         <scene sceneID="UA8-UH-nsC">
             <objects>
-                <viewController storyboardIdentifier="HomeVC" id="81n-NW-HlI" customClass="HomeVC" customModule="Flickr_Search" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HomeVC" id="81n-NW-HlI" customClass="ViewController" customModule="Flickr_Search" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nji-3P-91W">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -50,6 +50,11 @@
                         <viewLayoutGuide key="safeArea" id="ELQ-B2-GnM"/>
                     </view>
                     <navigationItem key="navigationItem" title="Home" id="WBG-Tx-aLZ"/>
+                    <connections>
+                        <outlet property="activityIndicatorView" destination="ce1-NZ-Uu7" id="uTS-Id-Os4"/>
+                        <outlet property="photoCollectionView" destination="i0C-DY-dK8" id="NjW-jH-DUS"/>
+                        <outlet property="searchBar" destination="DDF-Lq-hnf" id="0JO-2D-xL9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7y5-20-EH0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

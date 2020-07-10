@@ -3,4 +3,70 @@
    uuid = "642C0C49-CC0C-48E1-9C02-70BCEE3A8060"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B67CF0B1-D6D0-43F1-A04F-3C636066CE46"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Flickr Search/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "callAPIforSongList()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B67CF0B1-D6D0-43F1-A04F-3C636066CE46 - fbb08e5131c6e34b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Flickr_Search.ViewController.callAPIforSongList() -&gt; ()"
+                  moduleName = "Flickr Search"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/iffy.why/Development/Project/Flickr%20Search/Flickr%20Search/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "27">
+               </Location>
+               <Location
+                  uuid = "B67CF0B1-D6D0-43F1-A04F-3C636066CE46 - 37c58d38224a9706"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Bool, Swift.Optional&lt;Swift.Error&gt;, Swift.Optional&lt;Flickr_Search.Photos&gt;, Swift.Optional&lt;Foundation.Data&gt;) -&gt; () in Flickr_Search.ViewController.callAPIforSongList() -&gt; ()"
+                  moduleName = "Flickr Search"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/iffy.why/Development/Project/Flickr%20Search/Flickr%20Search/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "82"
+                  endingLineNumber = "82"
+                  offsetFromSymbolStart = "59">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "43B0BCDB-3C2B-433E-A050-732F8E66671D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Flickr Search/Networking/SessionManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "getServerData(searchText:pageCount:completionHandler:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

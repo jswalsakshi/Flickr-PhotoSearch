@@ -9,16 +9,19 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.activityIndicatorView.isHidden = true
         self.setupCollectionView()
+        self.callAPIforSongList()
+        }
     }
-}
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -69,3 +72,21 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
+private typealias APIHandler = ViewController
+extension APIHandler {
+    func callAPIforSongList() {
+//        guard let searchText = "Home", !artistName.isEmpty else {
+//            return self.showToast(message: "Please Enter Artist Name", font: .systemFont(ofSize: 12.0))
+//        }
+        SessionManager.sharedInstance.getServerData(searchText: "home", pageCount: 1, completionHandler: { (true, error, response, data) in
+            print(response?.photos.photo)
+           // self.results.removeAll()
+//            let listData = response?.results
+//            listData?.forEach({ (order) in
+//                self.results.append(order)
+//            })
+//            self.hideUnhideSearchBtn()
+//            self.table_songList.reloadData()
+        }
+    )}
+}

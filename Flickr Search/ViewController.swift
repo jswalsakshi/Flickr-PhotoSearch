@@ -14,6 +14,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
+    var imageResponseModel: PhotosClass?
+    let queryService = SessionManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +41,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        120
+        return 2
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -78,15 +80,20 @@ extension APIHandler {
 //        guard let searchText = "Home", !artistName.isEmpty else {
 //            return self.showToast(message: "Please Enter Artist Name", font: .systemFont(ofSize: 12.0))
 //        }
-        SessionManager.sharedInstance.getServerData(searchText: "home", pageCount: 1, completionHandler: { (true, error, response, data) in
-            print(response?.photos.photo)
+//        SessionManager.sharedInstance.getServerData(searchText: "home", pageCount: 1, completionHandler: { (true, error, response, data) in
+//            self.imageResponseModel = response?.photos
            // self.results.removeAll()
 //            let listData = response?.results
 //            listData?.forEach({ (order) in
 //                self.results.append(order)
 //            })
 //            self.hideUnhideSearchBtn()
-//            self.table_songList.reloadData()
+//            self.photoCollectionView.reloadData()
+        
+        queryService.getSearchResults(searchText: "Home", pageCount: 1) { (response, errormsg) in
+            print(response?.first)
         }
-    )}
+        
+        }
+//    )}
 }

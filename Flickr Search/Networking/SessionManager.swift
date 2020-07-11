@@ -8,93 +8,72 @@
 
 import Foundation
 
-class SessionManager{
+class Router: RequestFlickrImages{
     
-    let defaultSession = URLSession(configuration: .default)
+    //Replace your Flickr Key here
+    fileprivate let flickrKey = "a2b2783c63360f21f955cfed0dd57b61"
+    var requestCancelStatus = false
     
-    var dataTask: URLSessionDataTask?
-    var errorMessage = ""
-    var photos: [Photo] = []
-    
-    typealias JSONDictionary = [String: Any]
-    typealias QueryResult = ([Photo]?, String) -> Void
-    
-    let flickrKey = "a2b2783c63360f21f955cfed0dd57b61"
-    
-    func getSearchResults(searchText: String, pageCount: Int, completion: @escaping QueryResult) {
-        // 1
-        dataTask?.cancel()
-        
-        // 2
-        if var urlComponents = URLComponents(string: "https://api.flickr.com/services/rest") {
-            urlComponents.query = "method=flickr.photos.search&api_key=\(flickrKey)&format=json&nojsoncallback=1&safe_search=\(pageCount)&text=\(searchText)"
-            
-            // 3
-            guard let url = urlComponents.url else {
-                return
-            }
-            
-            // 4
-            dataTask = defaultSession.dataTask(with: url) { [weak self] data, response, error in
-                defer {
-                    self?.dataTask = nil
-                }
-                
-                // 5
-                if let error = error {
-                    self?.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
-                } else if
-                    let data = data,
-                    let response = response as? HTTPURLResponse,
-                    response.statusCode == 200 {
-                    
-                    self?.updateSearchResults(data)
-                    
-                    // 6
-                    DispatchQueue.main.async {
-                        completion(self?.photos, self?.errorMessage ?? "")
-                    }
-                }
-            }
-            
-            // 7
-            dataTask?.resume()
-        }
+    enum Result<value>{
+        case success(value)
+        case failure(Error?)
     }
     
-    private func updateSearchResults(_ data: Data) {
-        var response: JSONDictionary?
-        photos.removeAll()
-        
-        do {
-            response = try JSONSerialization.jsonObject(with: data, options: []) as? JSONDictionary
-        } catch let parseError as NSError {
-            errorMessage += "JSONSerialization error: \(parseError.localizedDescription)\n"
-            return
+    fileprivate var task: URLSessionTask?
+    
+    //MARK: - Make URL here based on keyword & page counts
+    fileprivate func getURL_Path(_ pageCount: String, and text: String) -> URL?{
+        guard let urlPath = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(flickrKey)&format=json&nojsoncallback=1&safe_search=\(pageCount)&text=\(text)") else {
+            return nil
         }
-        guard let array = response!["response"] as? [Any] else {
-            errorMessage += "Dictionary does not contain results key\n"
-            return
-        }
+        return urlPath
+    }
+    
+    //MARK: - Cancel all previous tasks
+    func cancelTask(){
+        requestCancelStatus = true
+        task?.cancel()
+    }
+    
+}
+
+extension Router{
+    
+    func requestFor<T: Codable>(text: String, with pageCount: String, decode: @escaping (Codable) -> T?, completionHandler: @escaping(Result<T>) -> Void){
         
-        array.forEach({ (photo) in
-            self.photos.append(photo as! Photo)
+        //Removing here keywords spaces
+        //let keyword = text.removeSpace
+        //guard keyword.count != 0 else { return }
+        
+        let session = URLSession.shared
+        guard let urlPath = getURL_Path(pageCount, and: text) else { return }
+        
+        //Set timeout for request
+        requestTimeOut()
+        
+        task = session.photosTask(with: urlPath, decodingType: T.self, completionHandler: { photos, response, error in
+            DispatchQueue.main.async {
+                guard error == nil,
+                    let result = photos else {
+                        self.requestCancelStatus = false
+                        completionHandler(.failure(error))
+                        return
+                }
+                completionHandler(.success(result))
+            }
         })
-        
-        
-       // var index = 0
-        
-        //for trackDictionary in array {
-//            if let trackDictionary = trackDictionary as? JSONDictionary,
-//                let previewURLString = trackDictionary["previewUrl"] as? String,
-//                let previewURL = URL(string: previewURLString),
-//                let name = trackDictionary["trackName"] as? String,
-//                let artist = trackDictionary["artistName"] as? String {
-//                tracks.append(Track(name: name, artist: artist, previewURL: previewURL, index: index))
-//                index += 1
-//            } else {
-//                errorMessage += "Problem parsing trackDictionary\n"
-//            }
-        }
+        task?.resume()
     }
+    
+    /**
+     Adding here timeout for cancel current task if any case request not getting success or taking too much time because of internet. Default time out is 15 seconds.
+     */
+    fileprivate func requestTimeOut(){
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(20), execute: {
+            self.task?.resume()
+        })
+    }
+}
+
 

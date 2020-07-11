@@ -14,14 +14,16 @@ class ViewController: UIViewController {
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
-    var imageResponseModel: PhotosClass?
-    let queryService = SessionManager()
+    fileprivate var searchPhotos = [Photo]()
+    fileprivate let router = Router()
+    fileprivate var pageCount = 0
+    fileprivate let imageProvider = ImageProvider()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.activityIndicatorView.isHidden = true
         self.setupCollectionView()
-        self.callAPIforSongList()
+        self.fetchSearchImages()
         }
     }
 
@@ -41,12 +43,30 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return searchPhotos.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.cellIdentifier, for: indexPath) as! PhotoCollectionViewCell
-        return cell
+         guard searchPhotos.count != 0 else {
+                   return cell
+               }
+               let model = searchPhotos[indexPath.row]
+               guard let mediaUrl = model.getImagePath() else {
+                   return cell
+               }
+               let image = imageProvider.cache.object(forKey: mediaUrl as NSURL)
+               cell.imgView_photo.backgroundColor = UIColor(white: 0.95, alpha: 1)
+               cell.imgView_photo.image = image
+               if image == nil {
+                   imageProvider.requestImage(from :mediaUrl, completion: { (image) -> Void in
+                       let indexPath_ = collectionView.indexPath(for: cell)
+                       if indexPath == indexPath_ {
+                           cell.imgView_photo.image = image
+                       }
+                   })
+               }
+               return cell
     }
 }
 
@@ -74,26 +94,86 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
+
+//MARK: - SearchBar Delegate
+extension ViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar){
+        searchBar.resignFirstResponder()
+        
+        //Reset old data first befor new search Results
+        resetValuesForNewSearch()
+        
+        guard let text = searchBar.text,
+            text.count != 0  else {
+              //  labelLoading.text = "Please type keyword to search result."
+                return
+        }
+        
+        //Requesting here new keyword
+        fetchSearchImages()
+        
+       // labelLoading.text = "Searching Images..."
+    }
+    
+    //MARK: - Clearing here old data search results with current running tasks
+    func resetValuesForNewSearch(){
+        pageCount = 0
+        router.cancelTask()
+        searchPhotos.removeAll()
+        self.photoCollectionView.reloadData()
+    }
+}
+
 private typealias APIHandler = ViewController
 extension APIHandler {
-    func callAPIforSongList() {
-//        guard let searchText = "Home", !artistName.isEmpty else {
-//            return self.showToast(message: "Please Enter Artist Name", font: .systemFont(ofSize: 12.0))
-//        }
-//        SessionManager.sharedInstance.getServerData(searchText: "home", pageCount: 1, completionHandler: { (true, error, response, data) in
-//            self.imageResponseModel = response?.photos
-           // self.results.removeAll()
-//            let listData = response?.results
-//            listData?.forEach({ (order) in
-//                self.results.append(order)
-//            })
-//            self.hideUnhideSearchBtn()
-//            self.photoCollectionView.reloadData()
+    func fetchSearchImages(){
+        pageCount+=1   //Count increment here
         
-        queryService.getSearchResults(searchText: "Home", pageCount: 1) { (response, errormsg) in
-            print(response?.first)
+        router.requestFor(text: searchBar.text ?? "home", with: pageCount.description, decode: { json -> Photos? in
+            guard let flickerResult = json as? Photos else { return  nil }
+            return flickerResult
+        }) { [unowned self] result in
+            DispatchQueue.main.async {
+                //self.labelLoading.text = ""
+                switch result{
+                case .success(let value):
+                    self.updateSearchResult(with: value.photos.photo)
+                case .failure(let error):
+                    print(error.debugDescription)
+                    guard self.router.requestCancelStatus == false else { return }
+//                    self.showAlertWithError((error?.localizedDescription) ?? "Please check your Internet connection or try again.", completionHandler: {[unowned self] status in
+//                        guard status else { return }
+//                        self.fetchSearchImages()
+//                    })
+                }
+            }
         }
-        
+    }
+    
+    //MARK: - Handle response result
+    func updateSearchResult(with photo: [Photo]){
+        DispatchQueue.main.async { [unowned self] in
+            let newItems = photo
+            self.searchPhotos.append(contentsOf: newItems)
+            self.photoCollectionView.reloadData()
         }
-//    )}
+    }
 }
+
+
+//MARK: - Scrollview Delegate
+extension ViewController: UIScrollViewDelegate {
+    
+    //MARK :- Getting user scroll down event here
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == photoCollectionView{
+            if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= (scrollView.contentSize.height)){
+                
+                //Start locading new data from here
+                fetchSearchImages()
+            }
+        }
+    }
+}
+

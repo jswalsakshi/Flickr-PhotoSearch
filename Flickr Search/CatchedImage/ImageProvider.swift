@@ -6,47 +6,72 @@
 //  Copyright © 2020 Sakshi Jaiswal. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
+typealias ImageDownloadHandler = (_ image: UIImage?, _ url: URL, _ indexPath: IndexPath?, _ error: Error?) -> Void
 
-class ImageProvider: RequestImages {
+final class ImageDownloadManager {
+    private var completionHandler: ImageDownloadHandler?
+    lazy var imageDownloadQueue: OperationQueue = {
+        var queue = OperationQueue()
+        queue.name = "com.flickrTest.imageDownloadqueue"
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
+    let imageCache = NSCache<NSString, UIImage>()
+    static let shared = ImageDownloadManager()
+    private init () {}
     
-    fileprivate let downloadQueue = DispatchQueue(label: "Images cache", qos: DispatchQoS.background)
-    internal var cache = NSCache<NSURL, UIImage>()
-
-    
-    //MARK: - Fetch image from URL and Images cache
-    fileprivate func loadImages(from url: URL, completion: @escaping (_ image: UIImage) -> Void) {
-        downloadQueue.async(execute: { () -> Void in
-            if let image = self.cache.object(forKey: url as NSURL) {
-                DispatchQueue.main.async {
-                    completion(image)
+    func downloadImage(_ flickrPhoto: FlickrPhoto, indexPath: IndexPath?, size: String = "m", handler: @escaping ImageDownloadHandler) {
+        self.completionHandler = handler
+        guard let url = flickrPhoto.flickrImageURL(size) else {
+            return
+        }
+        if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
+            /* check for the cached image for url, if YES then return the cached image */
+            print("Return cached Image for \(url)")
+           self.completionHandler?(cachedImage, url, indexPath, nil)
+        } else {
+             /* check if there is a download task that is currently downloading the same image. */
+            if let operations = (imageDownloadQueue.operations as? [PGOperation])?.filter({$0.imageUrl.absoluteString == url.absoluteString && $0.isFinished == false && $0.isExecuting == true }), let operation = operations.first {
+                print("Increase the priority for \(url)")
+                operation.queuePriority = .veryHigh
+            }else {
+                /* create a new task to download the image.  */
+                print("Create a new task for \(url)")
+                let operation = PGOperation(url: url, indexPath: indexPath)
+                if indexPath == nil {
+                    operation.queuePriority = .high
                 }
-                return
-            }
-            
-            do{
-                let data = try Data(contentsOf: url)
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.cache.setObject(image, forKey: url as NSURL)
-                        completion(image)
+                operation.downloadHandler = { (image, url, indexPath, error) in
+                    if let newImage = image {
+                        self.imageCache.setObject(newImage, forKey: url.absoluteString as NSString)
                     }
-                } else {
-                    print("Could not decode image")
+                    self.completionHandler?(image, url, indexPath, error)
                 }
-            }catch {
-                print("Could not load URL: \(url): \(error)")
+                imageDownloadQueue.addOperation(operation)
             }
-        })
+        }
+    }
+    
+    /* FUNCTION to reduce the priority of the network operation in case the user scrolls and an image is no longer visible. */
+    func slowDownImageDownloadTaskfor (_ flickrPhoto: FlickrPhoto) {
+        guard let url = flickrPhoto.flickrImageURL() else {
+            return
+        }
+        if let operations = (imageDownloadQueue.operations as? [PGOperation])?.filter({$0.imageUrl.absoluteString == url.absoluteString && $0.isFinished == false && $0.isExecuting == true }), let operation = operations.first {
+            print("Reduce the priority for \(url)")
+            operation.queuePriority = .low
+        }
+    }
+    
+    func cancelAll() {
+        imageDownloadQueue.cancelAllOperations()
     }
     
 }
 
-protocol RequestImages {}
 
-extension RequestImages where Self == ImageProvider{
-    func requestImage(from url: URL, completion: @escaping (_ image: UIImage) -> Void){
-        self.loadImages(from: url, completion: completion)
-    }
-}
+
+

@@ -8,4 +8,7 @@
 
 import Foundation
 
-protocol RequestFlickrImages: class {}
+struct FlickrSearchResults {
+  let searchTerm : String = ""
+  var searchResults = [FlickrPhoto]()
+}

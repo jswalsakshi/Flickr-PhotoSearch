@@ -137,25 +137,25 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
-
-// MARK: UITextFieldDelegate
-extension ViewController: UITextFieldDelegate {
+//MARK: - SearchBar Delegate
+extension ViewController: UISearchBarDelegate{
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        self.paging = nil
-        self.loadMore = true
-        guard let searchText = textField.text, searchText.count > 0 else {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar){
+        searchBar.resignFirstResponder()
+        
+        //Reset old data first befor new search Results
+        //resetValuesForNewSearch()
+        
+       self.loadMore = true
+        guard let searchText = searchBar.text, searchText.count > 0 else {
             ImageDownloadManager.shared.cancelAll()
             self.searches.searchResults.removeAll()
             self.photoCollectionView?.reloadData()
             self.loadMore = false
-            return true
+            return
         }
         //searchTextField.startAnimating()
         self.callSearchApi(searchText: searchText, pageNo: 1)
-    
-        return true
     }
 }
 

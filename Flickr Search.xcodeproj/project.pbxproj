@@ -98,6 +98,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C134D6E24BC7ADF00492226 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6CED0C4724B7A01B0022D04C /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6C134D6F24BCAC1500492226 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				6CED0C4524B7A01B0022D04C /* SceneDelegate.swift */,
+				6CED0C4324B7A01B0022D04C /* AppDelegate.swift */,
+				6CED0C4C24B7A01D0022D04C /* Assets.xcassets */,
+				6CED0C4E24B7A01D0022D04C /* LaunchScreen.storyboard */,
+				6CED0C5124B7A01D0022D04C /* Info.plist */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		6C134D7024BCAC2E00492226 /* StoryBoard */ = {
+			isa = PBXGroup;
+			children = (
+				6CED0C4924B7A01B0022D04C /* Main.storyboard */,
+			);
+			path = StoryBoard;
+			sourceTree = "<group>";
+		};
 		6C43321E24B83B71002CA897 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,13 +170,13 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		6C80500E24BA0FD8000A9A9E /* CatchedImage */ = {
+		6C80500E24BA0FD8000A9A9E /* ImageHandler */ = {
 			isa = PBXGroup;
 			children = (
 				6C80500F24BA0FF3000A9A9E /* ImageProvider.swift */,
 				6CACF5EB24BAEE58008E493E /* PGOperation.swift */,
 			);
-			path = CatchedImage;
+			path = ImageHandler;
 			sourceTree = "<group>";
 		};
 		6CED0C3724B7A01B0022D04C = {
@@ -174,19 +202,15 @@
 		6CED0C4224B7A01B0022D04C /* Flickr Search */ = {
 			isa = PBXGroup;
 			children = (
-				6C80500E24BA0FD8000A9A9E /* CatchedImage */,
-				6C43322E24B8B364002CA897 /* Networking */,
 				6C43322B24B89725002CA897 /* Model */,
+				6C43321E24B83B71002CA897 /* View */,
+				6C134D6E24BC7ADF00492226 /* Controller */,
+				6C134D7024BCAC2E00492226 /* StoryBoard */,
+				6C80500E24BA0FD8000A9A9E /* ImageHandler */,
+				6C43322E24B8B364002CA897 /* Networking */,
 				6C43322824B86B10002CA897 /* Extension */,
 				6C43322324B863F5002CA897 /* IBDesign */,
-				6C43321E24B83B71002CA897 /* View */,
-				6CED0C4324B7A01B0022D04C /* AppDelegate.swift */,
-				6CED0C4524B7A01B0022D04C /* SceneDelegate.swift */,
-				6CED0C4724B7A01B0022D04C /* ViewController.swift */,
-				6CED0C4924B7A01B0022D04C /* Main.storyboard */,
-				6CED0C4C24B7A01D0022D04C /* Assets.xcassets */,
-				6CED0C4E24B7A01D0022D04C /* LaunchScreen.storyboard */,
-				6CED0C5124B7A01D0022D04C /* Info.plist */,
+				6C134D6F24BCAC1500492226 /* Support */,
 			);
 			path = "Flickr Search";
 			sourceTree = "<group>";

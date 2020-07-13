@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.activityIndicatorView.isHidden = true
         self.setupCollectionView()
-       // self.fetchSearchImages()
+        // self.fetchSearchImages()
     }
     
     func photoForIndexPath(indexPath: IndexPath) -> FlickrPhoto {
@@ -51,29 +51,29 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.cellIdentifier, for: indexPath) as! PhotoCollectionViewCell
-//         guard searchPhotos.count != 0 else {
-//                   return cell
-//               }
-//               let model = searchPhotos[indexPath.row]
-//               guard let mediaUrl = model.getImagePath() else {
-//                   return cell
-//               }
-//               let image = imageProvider.cache.object(forKey: mediaUrl as NSURL)
-//               cell.imgView_photo.backgroundColor = UIColor(white: 0.95, alpha: 1)
-//               cell.imgView_photo.image = image
-//               if image == nil {
-//                   imageProvider.requestImage(from :mediaUrl, completion: { (image) -> Void in
-//                       let indexPath_ = collectionView.indexPath(for: cell)
-//                       if indexPath == indexPath_ {
-//                           cell.imgView_photo.image = image
-//                       }
-//                   })
-//               }
-               return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.cellIdentifier, for: indexPath) as! PhotoCollectionViewCell
+        //         guard searchPhotos.count != 0 else {
+        //                   return cell
+        //               }
+        //               let model = searchPhotos[indexPath.row]
+        //               guard let mediaUrl = model.getImagePath() else {
+        //                   return cell
+        //               }
+        //               let image = imageProvider.cache.object(forKey: mediaUrl as NSURL)
+        //               cell.imgView_photo.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        //               cell.imgView_photo.image = image
+        //               if image == nil {
+        //                   imageProvider.requestImage(from :mediaUrl, completion: { (image) -> Void in
+        //                       let indexPath_ = collectionView.indexPath(for: cell)
+        //                       if indexPath == indexPath_ {
+        //                           cell.imgView_photo.image = image
+        //                       }
+        //                   })
+        //               }
+        return cell
     }
     
-     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastRowIndex = collectionView.numberOfItems(inSection: 0) - 1
         if indexPath.row == lastRowIndex && paging != nil {
             loadMorePhotos()
@@ -113,11 +113,11 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
-        
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat = 8
         let size = UIScreen.main.bounds.width/2 - 3*padding/2
@@ -146,7 +146,7 @@ extension ViewController: UISearchBarDelegate{
         //Reset old data first befor new search Results
         //resetValuesForNewSearch()
         
-       self.loadMore = true
+        self.loadMore = true
         guard let searchText = searchBar.text, searchText.count > 0 else {
             ImageDownloadManager.shared.cancelAll()
             self.searches.searchResults.removeAll()
@@ -169,7 +169,7 @@ extension APIHandler {
             //self.searchBar.stopAnimating()
             if let paging = paging, paging.currentPage == 1 {
                 ImageDownloadManager.shared.cancelAll()
-               self.searches.searchResults.removeAll()
+                self.searches.searchResults.removeAll()
                 self.photoCollectionView?.reloadData()
             }
             
@@ -210,15 +210,15 @@ extension ViewController: UIScrollViewDelegate {
         var triggerThreshold  = Float((diffHeight - frameHeight))/Float(threshold);
         triggerThreshold   =  min(triggerThreshold, 0.0)
         let pullRatio  = min(abs(triggerThreshold),1.0);
-//        self.footerView?.setTransform(inTransform: CGAffineTransform.identity, scaleFactor: CGFloat(pullRatio))
-//        if pullRatio >= 1 {
-//            self.footerView?.animateFinal()
-//        }
+        //        self.footerView?.setTransform(inTransform: CGAffineTransform.identity, scaleFactor: CGFloat(pullRatio))
+        //        if pullRatio >= 1 {
+        //            self.footerView?.animateFinal()
+        //        }
         print("pullRatio:\(pullRatio)")
     }
     
     //compute the offset and call the load method
-     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let contentOffset = scrollView.contentOffset.y;
         let contentHeight = scrollView.contentSize.height;
         let diffHeight = contentHeight - contentOffset;
@@ -227,10 +227,10 @@ extension ViewController: UIScrollViewDelegate {
         print("pullHeight:\(pullHeight)");
         if pullHeight == 0.0
         {
-//            if (self.footerView?.isAnimatingFinal)! {
-//                print("load more trigger")
-//                self.footerView?.startAnimate()
-//            }
+            //            if (self.footerView?.isAnimatingFinal)! {
+            //                print("load more trigger")
+            //                self.footerView?.startAnimate()
+            //            }
         }
     }
 }

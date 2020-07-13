@@ -9,15 +9,13 @@
 import Foundation
 import UIKit
 
-let apiKey = "de24642a8668fb0318ec5b9cecfda18c"
+let apiKey = "4d972a8eaeac4db640a75e7b8297940e"
 
 class Flickr {
     
-    //let processingQueue = OperationQueue()
-    
-    func searchFlickrForTerm(_ searchTerm: String, page: Int = 1,completion : @escaping (_ results: FlickrSearchResults?, _ paging: Paging?,_ error : NSError?) -> Void){
+    func searchFlickrForTerm(_ searchTerm: String, page: Int = 1, completion : @escaping (_ results: FlickrSearchResults?, _ paging: Paging?,_ error : NSError?) -> Void) {
         
-        guard let searchURL = flickrSearchURLForSearchTerm(searchTerm,page: page) else {
+        guard let searchURL = flickrSearchURLForSearchTerm(searchTerm, page: page) else {
             let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Unknown API response"])
             completion(nil, nil,APIError)
             return
@@ -92,6 +90,7 @@ class Flickr {
                     })
                     return
                 }
+                
                 var paging : Paging?
                 var flickrPhotos = [FlickrPhoto]()
                 
@@ -104,15 +103,6 @@ class Flickr {
                     }
                     let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
                     flickrPhotos.append(flickrPhoto)
-                    /*guard let url = flickrPhoto.flickrImageURL(),
-                        let imageData = try? Data(contentsOf: url as URL) else {
-                            break
-                    }
-                    
-                    if let image = UIImage(data: imageData) {
-                        flickrPhoto.thumbnail = image
-                        flickrPhotos.append(flickrPhoto)
-                    }*/
                 }
                 
                 if let currentPage = photosContainer["page"] as? Int,
@@ -134,7 +124,7 @@ class Flickr {
         }) .resume()
     }
     
-    fileprivate func flickrSearchURLForSearchTerm(_ searchTerm:String, page: Int = 1) -> URL? {
+    fileprivate func flickrSearchURLForSearchTerm(_ searchTerm: String, page: Int = 1) -> URL? {
         
         guard let escapedTerm = searchTerm.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) else {
             return nil

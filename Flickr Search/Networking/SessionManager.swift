@@ -13,7 +13,7 @@ let apiKey = "4d972a8eaeac4db640a75e7b8297940e"
 
 class Flickr {
     
-    func searchFlickrForTerm(_ searchTerm: String, page: Int = 1, completion : @escaping (_ results: FlickrSearchResults?, _ paging: Paging?,_ error : NSError?) -> Void) {
+    func searchFlickrForTerm(_ searchTerm: String?, page: Int = 1, completion : @escaping (_ results: FlickrSearchResults?, _ paging: Paging?,_ error : NSError?) -> Void) {
         
         guard let searchURL = flickrSearchURLForSearchTerm(searchTerm, page: page) else {
             let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Unknown API response"])
@@ -124,15 +124,15 @@ class Flickr {
         }) .resume()
     }
     
-    fileprivate func flickrSearchURLForSearchTerm(_ searchTerm: String, page: Int = 1) -> URL? {
+    fileprivate func flickrSearchURLForSearchTerm(_ searchTerm: String?, page: Int = 1) -> URL? {
         
-        guard let escapedTerm = searchTerm.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) else {
-            return nil
+        guard let escapedTerm = searchTerm?.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) else {
+            return URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=\(apiKey)&per_page=20&format=json&nojsoncallback=1&page=\(page)")
         }
         
         let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1&page=\(page)"
         
-        guard let url = URL(string:URLString) else {
+        guard let url = URL(string: URLString) else {
             return nil
         }
         
